@@ -204,9 +204,6 @@ NSString* PBGitRepositoryErrorDomain = @"GitXErrorDomain";
 	// We don't want the window controller to display anything yet..
 	// We'll leave that to the caller of this method.
 #ifndef CLI
-    if (![self workingDirectory]) { // If we couldn't find the working directory, assume it's the place we were opened from.
-        workingDirectory = [[path absoluteURL] path];
-    }
 	[self addWindowController:[[PBGitWindowController alloc] initWithRepository:self displayDefault:NO]];
 #endif
 
@@ -631,12 +628,20 @@ NSString* PBGitRepositoryErrorDomain = @"GitXErrorDomain";
 
 - (NSString *) workingDirectory
 {
-	if ([self.fileURL.path hasSuffix:@"/.git"])
-		return [self.fileURL.path substringToIndex:[self.fileURL.path length] - 5];
-	else if ([[self outputForCommand:@"rev-parse --is-inside-work-tree"] isEqualToString:@"true"])
-		return [PBGitBinary path];
+    if ([self.fileURL.path hasSuffix:@"/.git"])
+        return [self.fileURL.path substringToIndex:[self.fileURL.path length] - 5];
+    else {
+        NSRange range = [self.fileURL.path rangeOfString: @"/.git/modules/"];
+        if (range.location != NSNotFound) {
+            NSString *relativeModulePath = [self.fileURL.path substringFromIndex: range.location + range.length ];
+            NSString *supermodulePath = [self.fileURL.path substringToIndex: range.location];
+            return [supermodulePath stringByAppendingPathComponent: relativeModulePath];
+        }
+        else if ([[self outputForCommand:@"rev-parse --is-inside-work-tree"] isEqualToString:@"true"])
+            return [PBGitBinary path];
+    }
 	
-	return nil;
+	return self.fileURL.path;
 }
 
 #pragma mark Remotes
