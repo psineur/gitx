@@ -204,6 +204,9 @@ NSString* PBGitRepositoryErrorDomain = @"GitXErrorDomain";
 	// We don't want the window controller to display anything yet..
 	// We'll leave that to the caller of this method.
 #ifndef CLI
+    if (![self workingDirectory]) { // If we couldn't find the working directory, assume it's the place we were opened from.
+        workingDirectory = [[path absoluteURL] path];
+    }
 	[self addWindowController:[[PBGitWindowController alloc] initWithRepository:self displayDefault:NO]];
 #endif
 
