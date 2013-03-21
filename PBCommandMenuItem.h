@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "PBCommand.h"
 
-@interface PBCommandMenuItem : NSMenuItem {}
+@interface PBCommandMenuItem : NSMenuItem {
+	PBCommand *_command;
+}
 
 - initWithCommand:(PBCommand *) aCommand;
 

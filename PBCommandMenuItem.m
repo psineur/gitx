@@ -12,6 +12,7 @@
 
 - initWithCommand:(PBCommand *) aCommand {
 	if ((self = [super init])) {
+		_command = aCommand; // self won’t hang on to with just “-setTarget:”!
 		super.title = [aCommand displayName];
 		[self setTarget:aCommand];
 		[self setAction:@selector(invoke)];
