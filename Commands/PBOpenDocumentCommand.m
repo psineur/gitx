@@ -14,7 +14,7 @@
 
 - (id) initWithDocumentAbsolutePath:(NSString *) path {
 	if ((self = [super initWithDisplayName:@"Open" parameters:nil repository:nil])) {
-		documentURL = [[NSURL alloc] initWithString:path];
+		documentURL = [NSURL fileURLWithPath:path];
 	}
 	return self;
 }
